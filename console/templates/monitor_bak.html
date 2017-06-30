@@ -1,0 +1,129 @@
+{% extends 'blank.html' %}
+{% load mytags %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">监控</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 监控</h2>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <div id="container"></div>
+    </div>
+
+
+
+
+{% endblock %}
+
+{% block script %}
+    <script src="/static/charisma/js/highstock.js"></script>
+    <script type="text/javascript">
+    function show_chart(){
+        
+    }
+
+
+    Highcharts.setOptions({
+        global: { useUTC: false  },
+        lang: {
+            months: ['1月', '2月', '3月', '4月', '5月', '6月', '7月', '8月', '9月', '10月', '11月', '12月'],
+            shortMonths : ['01', '02', '03', '04', '05', '06', '07', '08', '09', '10', '11', '12'],
+            weekdays: ['周日', '周一', '周二', '周三', '周四', '周五', '周六'],
+            thousandsSep:''// 去掉千位的逗号
+        }
+    });
+        $(function () {
+
+    $.getJSON('/get_data/', function (data) {
+        // Create the chart
+        $('#container').highcharts('StockChart', {
+
+            chart : {
+                events : {
+                    load : function () {
+
+                        // set up the updating of the chart each second
+                        var series = this.series[0];
+                        setInterval(function () {
+                            $.ajax({
+                                type: "POST",
+                                url: "/get_dynamic/",
+                                async: false,
+                                success: function(result){
+                                    var x = parseInt(result.split(",")[0]);
+                                    var y = parseInt(result.split(",")[1]);
+                                    series.addPoint([x, y], true, true);
+                                }
+                            });
+                        }, 1000*60);
+                    }
+                }
+            },
+
+            rangeSelector : {
+                buttons: [{
+                    type: 'minute',
+                    count: 1,
+                    text: '1min'
+                }, {
+                    type: 'hour',
+                    count: 1,
+                    text: '1h'
+                }, {
+                    type: 'day',
+                    count: 1,
+                    text: '1d'
+                }, {
+                    type: 'month',
+                    count: 1,
+                    text: '1m'
+                }, {
+                    type: 'all',
+                    text: 'All'
+                }],
+                inputEnabled: false, // it supports only days
+                selected : 0 // all
+            },
+
+            tooltip: {
+                xDateFormat: '%Y-%m-%d %H:%M:%S, %A'
+            },
+
+            xAxis: {
+               type: 'datetime',
+                    dateTimeLabelFormats:
+                {
+                    second: '%Y-%b-%e %H:%M:%S'
+                }
+            },
+
+            title : {
+                text : '测试随机数'
+            },
+
+            credits: {
+                href: "http://www.gomeplus.com/",
+                text: "devops.meixin.com"
+            },
+
+            series : [{
+                name : '随机数',
+                data : data,
+                tooltip: {
+                    valueDecimals: 0
+                }
+            }]
+        });
+    });
+
+});
+
+    </script>
+{% endblock %}

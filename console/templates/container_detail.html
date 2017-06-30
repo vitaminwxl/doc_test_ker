@@ -1,0 +1,62 @@
+{% extends 'blank.html' %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">服务器详情</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 服务器详情</h2>
+{% endblock %}
+
+{% block content %}
+    <div class="form-group">
+        <label for="hostname">主机名</label>
+        <input type="text" class="form-control" id="hostname" placeholder="主机名" disabled="disabled" value="{{ container.hostname }}">
+    </div>
+
+    <div class="form-group">
+        <label for="container_ip">IP地址</label>
+        <input type="text" class="form-control" id="container_ip" placeholder="IP地址" disabled="disabled" value="{{ container.container_ip }}">
+    </div>
+
+    <div class="form-group">
+        <label for="host_ip">宿主机IP</label>
+        <input type="text" class="form-control" id="host_ip" placeholder="宿主机IP" disabled="disabled" value="{{ container.host_ip }}">
+    </div>
+
+    <div class="form-group">
+        <label for="container_id">容器ID</label>
+        <input type="text" class="form-control" id="container_id" placeholder="容器ID" disabled="disabled"value="{{ container.container_id }}">
+    </div>
+
+    <div class="form-group">
+        <label for="config">配置</label>
+        <input class="form-control" id="config" disabled="disabled" value="{{ container.application.config.name }}">
+    </div>
+
+    <div class="form-group">
+        <label for="os">操作系统</label>
+        <input type="text" class="form-control" id="os" placeholder="操作系统" disabled="disabled" value="{{ container.application.os }}">
+    </div>
+
+    <div class="form-group">
+        <label for="reviewer">申请者</label>
+        <input type="text" class="form-control" id="reviewer" placeholder="申请者" disabled="disabled" value="{{ container.application.username }}">
+    </div>
+
+    <div class="form-group">
+        <label for="reviewer">申请时间</label>
+        <input type="text" class="form-control" id="reviewer" placeholder="申请时间" disabled="disabled"value="{{ container.application.apply_time | date:'Y-m-d H:i:s' }}">
+    </div>
+
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+
+    </script>
+{% endblock %}

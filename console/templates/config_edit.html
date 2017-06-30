@@ -1,0 +1,61 @@
+{% extends 'blank.html' %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">配置管理</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 配置管理</h2>
+{% endblock %}
+
+{% block content %}
+    <div class="form-group">
+        <label for="config_name">配置名称</label>
+        <input type="text" class="form-control" id="config_name" placeholder="配置名称" value="{{ config.name }}">
+    </div>
+
+    <div class="form-group">
+        <label for="cpu">CPU</label>
+        <input type="text" class="form-control" id="cpu" placeholder="cpu数量" value="{{ config.cpu }}">
+    </div>
+
+    <div class="form-group">
+        <label for="memory">内存</label>
+        <input type="text" class="form-control" id="memory" placeholder="内存" value="{{ config.memory }}">
+    </div>
+
+    <div class="form-group">
+        <label for="disk">硬盘</label>
+        <input type="text" class="form-control" id="disk" placeholder="硬盘" value="{{ config.disk }}">
+    </div>
+
+    <div class="form-group">
+        <label for="description">备注</label>
+        <textarea class="form-control" rows="5" id="description">{{ config.description }}</textarea>
+    </div>
+
+    <button class="btn btn-primary" id="config_submit">提交</button>
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $("#config_submit").bind('click', function(){
+            var config_name = $("#config_name").val();
+            var cpu = $("#cpu").val();
+            var memory = $("#memory").val();
+            var disk = $("#disk").val();
+            var description = $("#description").val();
+            $.post('/config/edit/{{ config.id }}/', {"config_name": config_name, "description": description,
+                "cpu": cpu, "memory": memory, "disk": disk},
+                function(ret){
+                    alert(ret);
+                    window.location.href = '/config/list/'
+                })
+        })
+
+    </script>
+{% endblock %}

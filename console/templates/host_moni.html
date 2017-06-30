@@ -1,0 +1,15 @@
+{% extends 'blank.html'%}
+{% block content %}
+
+<table>
+	<tr>
+		<th>主机ip</th><th>主机内存</th><th>已用内存</th><th>主机硬盘</th><th>已用硬盘</th>
+	</tr>
+	{% for host in host_list%}
+	<tr>
+	<td>{{host.ip}}</td><td>{{host.total_memory}}</td><td>{{host.used_memory}}</td><td>{{host.total_disk}}</td><td>{{host.used_disk}}</td>
+	</tr>
+	{% endfor%}
+</table>
+
+{% endblock %}

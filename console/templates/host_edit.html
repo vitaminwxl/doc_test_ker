@@ -1,0 +1,66 @@
+{% extends 'blank.html' %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">首页</a>
+        </li>
+        <li>
+            <a href="/host/edit/">宿主机编辑</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 宿主机编辑</h2>
+{% endblock %}
+
+{% block content %}
+<div class="form-group">
+    <label for="host_name">名称</label>
+    <input type="text" class="form-control" id="host_name" placeholder="名称" value="{{ host.name }}">
+</div>
+<div class="form-group">
+    <label for="host_ip">IP地址</label>
+    <input type="text" class="form-control" id="host_ip" placeholder="IP地址" value="{{ host.ip }}">
+</div>
+<div class="form-group">
+    <label for="host_range">分配IP范围(ex: 192.168.1.1/24)</label>
+    <input type="text" class="form-control" id="host_range" placeholder="分配IP范围(ex: 192.168.1.1/24)" value="{{ host.ip_range }}">
+</div>
+<div class="form-group">
+    <label for="host_netmask">分配IP的子网掩码</label>
+    <input type="text" class="form-control" id="host_netmask" placeholder="子网掩码" value="{{ host.netmask }}">
+</div>
+<div class="form-group">
+    <label for="host_gateway">分配IP的网关</label>
+    <input type="text" class="form-control" id="host_gateway" placeholder="网关" value="{{ host.gateway }}">
+</div>
+<div class="form-group">
+    <label for="host_disk">使用磁盘(必须是空的磁盘，如：sda,sdb)</label>
+    <input type="text" class="form-control" id="host_disk" placeholder="使用磁盘(必须是空的磁盘，如：sda,sdb)" value="{{ host.disk_used }}">
+</div>
+
+<button type="button" class="btn btn-info" id="host_edit">提交</button>
+
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+$('#host_edit').bind('click', function(){
+    $(this).fadeOut(1).parent().append('<button class="btn btn-info"> 添加中... </button>');
+    var ip = $("#host_ip").val();
+    var netmask = $("#host_netmask").val();
+    var gateway = $("#host_gateway").val();
+    var disk = $("#host_disk").val();
+    var name = $("#host_name").val();
+    var ip_range = $("#host_range").val();
+    $.post('/host/edit/{{ host.id }}/', {"ip": ip, "name": name, "netmask": netmask, "ip_range": ip_range,
+        "gateway": gateway, "disk": disk}, function(ret){
+        alert(ret);
+        location.href = '/host/manage/'
+    })
+
+})
+
+</script>
+{% endblock %}

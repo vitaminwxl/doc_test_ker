@@ -1,0 +1,59 @@
+{% extends 'blank.html' %}
+{% load mytags %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">首页</a>
+        </li>
+        <li>
+            <a href="/">容器监控</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 监控</h2>
+{% endblock %}
+
+{% block content %}
+    <div>
+        <div>
+            <label class="label label-success">要查看的主机</label>
+            <select data-rel="chosen" id="hostname">
+                {% for c in container_all %}
+                    {% ifequal c.hostname hostname %}
+                        <option selected>{{ c.hostname }}</option>
+                    {% else %}
+                        <option>{{ c.hostname }}</option>
+                    {% endifequal %}
+                {% endfor %}
+            </select>
+        </div>
+        <div id="container"></div>
+        <div id="container2"></div>
+        <div id="container3"></div>
+        <div id="container4"></div>
+    </div>
+
+
+
+
+{% endblock %}
+
+{% block script %}
+    <script src="/static/charisma/js/highstock.src.js"></script>
+    <script src="/static/charisma/js/custom_chart.js"></script>
+    <script type="text/javascript">
+
+    var hostname = $("#hostname").val();
+    show_chart('container', hostname, 'cpu', hostname + ':cpu使用情况', 'cpu', '%');
+    show_chart('container2', hostname, 'memory', hostname + ':内存使用情况', '内存', 'MB');
+    show_network_chart('container3', hostname);
+
+    $("#hostname").change(function(){
+        var hostname = $("#hostname").val();
+        window.location.href = "/monitor/" + hostname + "/"
+    });
+
+    </script>
+{% endblock %}

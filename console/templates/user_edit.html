@@ -1,0 +1,57 @@
+{% extends 'blank.html' %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">首页</a>
+        </li>
+        <li>
+            <a href="/user/edit/">用户编辑</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 用户编辑</h2>
+{% endblock %}
+
+{% block content %}
+    <div class="form-group">
+        <label for="username">用户名称</label>
+        <input type="text" class="form-control" id="username" placeholder="用户名称" value="{{ user.username }}">
+    </div>
+
+    <div class="form-group">
+        <label for="email">用户邮箱</label>
+        <input type="text" class="form-control" id="email" placeholder="Email" value="{{ user.email }}">
+    </div>
+
+    <div class="form-group">
+        <label >用户权限</label>
+        <div class="radio">
+        {% for p, perm_name in user_perm.items %}
+            <label>
+                <input type="radio" name="perm_radio" value="{{ p }}" {% ifequal p user.perm %} checked{% endifequal %}>{{ perm_name }}
+            </label>
+        {% endfor %}
+        </div>
+    </div>
+
+    <button class="btn btn-primary" id="user_submit">提交</button>
+
+{% endblock %}
+
+{% block script %}
+<script type="text/javascript">
+    $("#user_submit").bind('click', function(){
+        var username = $("#username").val();
+        var email = $("#email").val();
+        var perm = $("input[name='perm_radio']:checked").val();
+        $.post('/user/edit/{{ user.id }}/', {"username": username, "email": email,
+            "perm": perm},
+            function(ret){
+                alert(ret);
+                window.location.href = '/user/manage/'
+            })
+    })
+</script>
+{% endblock %}

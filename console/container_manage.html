@@ -1,0 +1,176 @@
+{% extends 'blank.html' %}
+{% load mytags %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">首页</a>
+        </li>
+        <li>
+            <a href="/container/manage">容器管理</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 容器管理</h2>
+{% endblock %}
+
+{% block content %}
+
+    <div class="form-group">
+        <div style="display: inline">
+            <button class="btn btn-success" onclick="container_option('start', this)">批量启动</button>
+        </div>
+        <div style="display: inline">
+            <button class="btn btn-primary" onclick="container_option('stop', this)">批量停止</button>
+        </div>
+        <div style="display: inline">
+            <button class="btn btn-danger" onclick="container_option('delete', this)">批量删除</button>
+        </div>
+
+    </div>
+
+    <div class="form-group">
+    <table class="table table-striped table-bordered responsive custom_table">
+    <thead>
+    <tr>
+        <th><input type="checkbox" id="check_all" onclick="check_all()"></th>
+        <th>主机名</th>
+        <th>IP地址</th>
+        <th>容器ID</th>
+        <th>容器状态</th>
+        <th>申请者</th>
+        <th>操作</th>
+    </tr>
+    </thead>
+    <tbody>
+    {% for container in container_all %}
+        <tr>
+            <td><input type="checkbox" name="check_item" value="{{ container.id }}"> </td>
+            <td>{{ container.hostname }}</td>
+            <td>{{ container.container_ip }}</td>
+            <td>{{ container.container_id | prefix_12 }}</td>
+
+            {% with status=container.container_id|container_status:status_format %}
+                {% ifequal status 'Up'  %}
+                    <td><span class="label label-success">{{ status }}</span></td>
+                {% endifequal %}
+
+                {% ifequal status 'Exit'  %}
+                    <td><span class="label label-primary">{{ status }}</span></td>
+                {% endifequal %}
+
+                {% ifequal status 'Create'  %}
+                    <td><span class="label label-warning">{{ status }}</span></td>
+                {% endifequal %}
+
+                {% ifequal status 'Unknown'  %}
+                    <td><span class="label label-default">{{ status }}</span></td>
+                {% endifequal %}
+            {% endwith %}
+
+            <!--
+            <td>{{  container.container_id | container_status:status_format }}</td>
+            -->
+            <td>{{ container.application.username }}</td>
+            <td class="center">
+                <button class="btn btn-success" onclick="container_start('{{ container.id }}')">启动</button>
+                <button class="btn btn-primary" onclick="container_stop('{{ container.id }}')">停止</button>
+                <button class="btn btn-danger" onclick="container_delete('{{ container.id }}', this)">删除</button>
+                <button class="btn btn-info" onclick="container_reset('{{ container.id }}', this)">重建</button>
+                <a class="btn btn-warning" href="/container/detail/{{ container.id }}/">详情</a>
+            </td>
+        </tr>
+    {% endfor %}
+    </tbody>
+    </table>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        function check_all(){
+            var check_status = $("#check_all").is(':checked');
+            $("input[name='check_item']").prop("checked", check_status);
+        }
+
+        function container_start(id){
+            if(confirm('确认要启动容器吗？')){
+                $.post('/container/start/', {"container_id": id}, function(ret){
+                    alert(ret);
+                    window.location.reload();
+                })
+            }
+        }
+
+        function container_stop(id){
+            if(confirm('确认要停止容器吗？')){
+                $.post('/container/stop/', {"container_id": id}, function(ret){
+                    alert(ret);
+                    window.location.reload();
+                })
+            }
+        }
+
+        function container_delete(id, ob){
+            if(confirm('确认要删除该容器吗？')){
+                $(ob).fadeOut(1).parent().append('<button class="btn btn-danger"> 删除中... </button>');
+                $.post('/container/delete/', {"container_id": id}, function(ret){
+                    alert(ret);
+                    window.location.reload();
+                })
+            }
+        }
+
+	function container_reset(id, ob){
+            if(confirm('确认要重建该容器吗？')){
+                $(ob).fadeOut(1).parent().append('<button class="btn btn-info"> 重建中... </button>');
+                $.post('/container/reset/', {"container_id": id}, function(ret){
+                    alert(ret);
+                    window.location.reload();
+                })
+            }
+        }	
+
+        function container_option(option, ob){
+            if(confirm('确认要执行操作吗？')){
+                var checked_container = $("input[name='check_item']:checked");
+                var containers = new Array();
+                $(checked_container).each(function(){
+                    var container_id = this.value;
+                    // var ins = {'container_id': container_id};
+                    containers.push(container_id);
+                });
+
+                if(containers.length == 0){
+                    alert('没有选中的容器');
+                    return
+                }
+                containers = JSON.stringify(containers);
+
+                switch (option){
+                    case 'start':
+                        $(ob).fadeOut(1).parent().append('<button class="btn btn-success"> 启动中... </button>');
+                        break;
+                    case 'stop':
+                        $(ob).fadeOut(1).parent().append('<button class="btn btn-primary"> 停止中... </button>');
+                        break;
+                    case 'delete':
+                        $(ob).fadeOut(1).parent().append('<button class="btn btn-danger"> 删除中... </button>');
+                        break;
+                    default:
+                        return;
+
+                }
+
+                $.post('/container/batch_handle/', {'option': option, 'containers': containers}, function(ret){
+                    alert(ret);
+                    window.location.reload()
+                });
+            }
+        }
+
+
+    </script>
+{% endblock %}

@@ -1,0 +1,91 @@
+{% extends 'blank.html' %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">服务器申请</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 服务器申请</h2>
+{% endblock %}
+
+{% block content %}
+    <div class="form-group">
+        <label for="server_type">服务器类型</label>
+        <div>
+            <select data-rel="chosen" style="width: 50%" id="server_type">
+                {% for config in config_all %}
+                    <option value="{{ config.id }}">{{ config.name }}&nbsp;&nbsp;&nbsp;&nbsp;  cpu:{{ config.cpu }}_mem:{{ config.memory }}_disk:{{ config.disk }}</option>
+                {% endfor %}
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="server_os">操作系统</label>
+        <div>
+            <select data-rel="chosen" style="width: 50%" id="server_os">
+                <option>centos6.7</option>
+                <option>centos7</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="server_num">申请服务器数量(1-5)</label>
+        <input type="text" class="form-control" id="server_num" placeholder="申请服务器数量">
+    </div>
+
+    <div class="form-group">
+        <label for="users_add">添加用户(多个用空格隔开，默认会加上sudo权限，请谨慎添加)</label>
+        <input type="text" class="form-control" id="users_add" placeholder="添加用户(多个用空格隔开，默认会加上sudo权限，请谨慎添加)">
+    </div>
+
+    <div class="form-group">
+        <label for="leader_email">直接领导邮箱(如无直接领导，请填写自己邮箱地址)</label>
+        <input type="text" class="form-control" id="leader_email" placeholder="直接领导邮箱(如无直接领导，请填写自己邮箱地址)">
+    </div>
+
+    <div class="form-group">
+        <label for="apply_reason">申请原因</label>
+        <textarea class="form-control" id="apply_reason"></textarea>
+    </div>
+
+    <button class="btn btn-primary" id="apply_submit">送审</button>
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+        $("#apply_submit").bind('click', function(){
+            var server_type = $("#server_type").val();
+            var server_os = $("#server_os").val();
+            var users = $("#users_add").val();
+            var server_num = $("#server_num").val();
+            if(parseInt(server_num) >= parseInt(1) && parseInt(server_num) <= parseInt(5)){
+
+            }else {
+                alert("输入服务器数量有误");
+                return false;
+            }
+            var leader_email = $("#leader_email").val();
+            var pattern = /^([\.a-zA-Z0-9_-])+@([a-zA-Z0-9_-])+(\.[a-zA-Z0-9_-])+/;
+            if (!pattern.test(leader_email)) {
+                alert("领导邮箱地址有误");
+                return false;
+            }
+            var apply_reason = $("#apply_reason").val();
+
+            $.post('/server_apply/', {"server_type": server_type, "server_os": server_os,
+                "users": users, "server_num": server_num, "leader_email": leader_email,
+                "apply_reason": apply_reason},
+                function(ret){
+                    alert(ret);
+                    window.location.href = '/'
+                })
+        })
+
+    </script>
+{% endblock %}

@@ -1,0 +1,76 @@
+{% extends 'blank.html' %}
+{% block nav %}
+    <ul class="breadcrumb">
+        <li>
+            <a href="/">服务器详情</a>
+        </li>
+    </ul>
+{% endblock %}
+
+{% block title %}
+    <h2><i class="glyphicon glyphicon-star-empty"></i> 服务器详情</h2>
+{% endblock %}
+
+{% block content %}
+    <div class="form-group">
+        <label for="server_type">服务器类型</label>
+        <div>
+            <select data-rel="chosen" style="width: 50%" id="server_type" disabled="disabled">
+                    <option>{{ application.config.name }}&nbsp;&nbsp;&nbsp;&nbsp;  cpu:{{ application.config.cpu }}_mem:{{ application.config.memory }}_disk:{{ application.config.disk }}</option>
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="server_os">操作系统</label>
+        <div>
+            <select data-rel="chosen" style="width: 50%" id="server_os" disabled="disabled">
+                <option {% ifequal application.os 'centos6.7' %} selected {% endifequal %}>centos6.7</option>
+                <option {% ifequal application.os 'centos7' %} selected {% endifequal %}>centos7</option>
+
+            </select>
+        </div>
+    </div>
+
+    <div class="form-group">
+        <label for="server_num">申请服务器数量(1-10)</label>
+        <input type="text" class="form-control" id="server_num" placeholder="申请服务器数量" disabled="disabled" value="{{ application.server_num }}">
+    </div>
+
+    <div class="form-group">
+        <label for="users_add">添加用户(多个用空格隔开)</label>
+        <input type="text" class="form-control" id="users_add" placeholder="添加用户" disabled="disabled" value="{{ application.users_add }}">
+    </div>
+
+    <div class="form-group">
+        <label for="leader_email">直接领导邮箱</label>
+        <input type="text" class="form-control" id="leader_email" placeholder="直接领导邮箱" disabled="disabled"value="{{ application.leader_email }}">
+    </div>
+
+    <div class="form-group">
+        <label for="apply_reason">申请原因</label>
+        <textarea class="form-control" id="apply_reason" disabled="disabled">{{ application.apply_reason }}</textarea>
+    </div>
+
+    <div class="form-group">
+        <label for="reviewer">审核者</label>
+        <input type="text" class="form-control" id="reviewer" placeholder="审核者" disabled="disabled"value="{{ application.reviewer }}">
+    </div>
+
+    <div class="form-group">
+        <label for="status">执行状态</label>
+        <input type="text" class="form-control" id="status" placeholder="执行状态" disabled="disabled"value="{{ application.get_status_display }}">
+    </div>
+
+    <div class="form-group">
+        <label for="result">执行结果</label>
+        <textarea class="form-control" id="result" disabled="disabled">{{ application.result }}</textarea>
+    </div>
+
+{% endblock %}
+
+{% block script %}
+    <script type="text/javascript">
+
+    </script>
+{% endblock %}
